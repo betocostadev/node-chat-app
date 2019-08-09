@@ -23,8 +23,14 @@ app.use('/', express.static(publicDirectoryPath))
 // broadcast = all clients except the sender
 io.on('connection', (socket) => {
   console.log('New WebSocket connection')
-  socket.emit('message', generateMessage('Welcome to Sermocino!'))
-  socket.broadcast.emit('message', generateMessage('A new user has joined the session.'))
+  // socket.emit('message', generateMessage('Welcome to Sermocino!'))
+  // socket.broadcast.emit('message', generateMessage('A new user has joined the session.'))
+
+  socket.on('join', ({username, room}) => {
+    socket.join(room)
+    socket.emit('message', generateMessage(`Hello ${username}, welcome to chat-room ${room} at Sermocino`))
+    socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined the room`))
+  })
 
   // Messaging - Added the callback for the acknowledgement of the message
   socket.on('sendMessage', (message, callback) => {

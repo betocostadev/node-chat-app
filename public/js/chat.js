@@ -8,9 +8,12 @@ const $btnMessageSend = $messageForm.querySelector('button')
 const $btnShareLocation = document.querySelector('#share-location')
 const $messages = document.querySelector('#messages')
 
-// Templates
+// Templates - Mustache Lib
 const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationMsgTemplate = document.querySelector('#location-msg-template').innerHTML
+
+// Options - Query String Lib
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
 
 // Send messages
 socket.on('message', (message) => {
@@ -75,3 +78,6 @@ $btnShareLocation.addEventListener('click', () => {
     })
   })
 })
+
+// Rooms
+socket.emit('join', { username, room})
