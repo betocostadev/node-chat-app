@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/styles.min.css">
   <title>Sermocino | Chat-app</title>
 </head>
 <body>
@@ -21,13 +23,13 @@
   <!-- Template for messages -->
   <script id="message-template" type="text/html">
     <div>
-      <p>{{message}}</p>
+      <p>{{createdAt}} - {{message}}</p>
     </div>
   </script>
   <!-- Template for Location -->
   <script id="location-msg-template" type="text/html">
     <div>
-        <p><a href="{{mapsUrl}}" target="_blank">My current location (aprox.)</a></p>
+        <p>{{createdAt}} - <a href="{{mapsUrl}}" target="_blank">My current location (aprox.)</a></p>
     </div>
   </script>
 

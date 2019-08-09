@@ -17,16 +17,18 @@ socket.on('message', (message) => {
   // console.log(message)
   // render messages
   const html = Mustache.render(messageTemplate, {
-    message: message
+    message: message.text,
+    createdAt: moment(message.createdAt).format('h:mm A')
   })
   $messages.insertAdjacentHTML('beforeend', html)
 })
 
 // Location message
-socket.on('locationMessage', (mapsUrl) => {
-  console.log(mapsUrl)
+socket.on('locationMessage', (message) => {
+  // console.log(mapsUrl)
   const html = Mustache.render(locationMsgTemplate, {
-    mapsUrl
+    mapsUrl: message.mapsUrl,
+    createdAt: moment(message.createdAt).format('h:mm A')
   })
   $messages.insertAdjacentHTML('beforeend', html)
 })
