@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://fonts.googleapis.com/css?family=Amatic+SC:400,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+  <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title>Sermocino | Chat-app</title>
+</head>
+<body>
+  <h1>Sermocino</h1>
+
+  <section class="chat">
+    <section class="chat__sidebar">
+
+    </section>
+
+    <section class="chat__main">
+      <div id="messages" class="chat__messages"></div>
+
+      <div class="compose">
+        <form id="message-form">
+          <label for="message-field">You say...</label>
+          <input type="text" name="message-field" id="message-field" placeholder="Your message">
+          <button>Send</button>
+        </form>
+        <button id="share-location">Share location</button>
+      </div>
+    </section>
+
+  </section>
+
+
+  <!-- Template for messages -->
+  <script id="message-template" type="text/html">
+    <div class="message">
+      <p>
+        <span class="message__name">User name</span>
+        <span class="message__meta">{{createdAt}}</span>
+      </p>
+      <p>{{message}}</p>
+    </div>
+  </script>
+
+  <!-- Template for Location -->
+  <script id="location-msg-template" type="text/html">
+    <div class="message">
+        <p>
+          <span class="message__name">User name</span>
+          <span class="message__meta">{{createdAt}}</span>
+        </p>
+        <p>Check my location <a href="{{mapsUrl}}" target="_blank"><i class="material-icons">
+            my_location
+            </i>
+          </a></p>
+    </div>
+  </script>
+
+  <!-- Mustache handle chat messages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+  <!-- Moment handle timestamps for messages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+  <!-- QS Query String - For setting up room names and user names -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+  <!-- Load socket.io client side JS. Served by socket lib -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- Chat app -->
+  <script src="/js/chat.js"></script>
+
+</body>
+</html>
