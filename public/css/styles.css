@@ -118,7 +118,7 @@ button:disabled {
 }
 
 .message p:nth-of-type(2) {
-    font-size: 1.6rem;
+    font-size: 1.75rem;
 }
 
 .message__name {
@@ -167,21 +167,22 @@ button:disabled {
 /* Chat Sidebar Styles */
 
 .room-title {
-    font-weight: 400;
-    font-size: 1.5rem;
+    font-weight: 700;
+    font-size: 1.75rem;
     background: #2c2f3a;
-    padding: 24px;
+    padding: 1.2rem;
 }
 
 .list-title {
-    font-weight: 500;
-    font-size: 1.15rem;
+    font-weight: 700;
+    font-size: 1.5rem;
     margin-bottom: 4px;
-    padding: 12px 24px 0 24px;
+    padding: 0.8rem 1.2rem 0 1.2rem;
 }
 
 .users {
-    list-style-type: none;
     font-weight: 400;
-    padding: 12px 24px 0 24px;
+    font-size: 1.3rem;
+    list-style-type: none;
+    padding: 0.8rem 1.2rem 0 1.2rem;
 }

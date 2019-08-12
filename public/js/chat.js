@@ -7,10 +7,12 @@ const $messageFormInput = $messageForm.querySelector('input')
 const $btnMessageSend = $messageForm.querySelector('button')
 const $btnShareLocation = document.querySelector('#share-location')
 const $messages = document.querySelector('#messages')
+const $sidebar = document.querySelector('#sidebar')
 
 // Templates - Mustache Lib
 const messageTemplate = document.querySelector('#message-template').innerHTML
 const locationMsgTemplate = document.querySelector('#location-msg-template').innerHTML
+const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 
 // Options - Query String Lib
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
@@ -20,6 +22,7 @@ socket.on('message', (message) => {
   // console.log(message)
   // render messages
   const html = Mustache.render(messageTemplate, {
+    username: message.username,
     message: message.text,
     createdAt: moment(message.createdAt).format('h:mm A')
   })
@@ -30,10 +33,20 @@ socket.on('message', (message) => {
 socket.on('locationMessage', (message) => {
   // console.log(mapsUrl)
   const html = Mustache.render(locationMsgTemplate, {
+    username: message.username,
     mapsUrl: message.mapsUrl,
     createdAt: moment(message.createdAt).format('h:mm A')
   })
   $messages.insertAdjacentHTML('beforeend', html)
+})
+
+// Populate room and keep track of users:
+socket.on('roomData', ({ room, users}) => {
+  const html = Mustache.render(sidebarTemplate, {
+    room,
+    users
+  })
+  $sidebar.innerHTML = html
 })
 
 $messageForm.addEventListener('submit', (e) => {
@@ -74,10 +87,16 @@ $btnShareLocation.addEventListener('click', () => {
       // Acknowledge the coords were sent below
     }, () => {
       $btnShareLocation.removeAttribute('disabled')
-      console.log('Location shared.')
+      // console.log('Location shared.')
     })
   })
 })
 
-// Rooms
-socket.emit('join', { username, room})
+// Rooms - if error, send back for the user
+socket.emit('join', { username, room}, (error) => {
+  if (error) {
+    alert(error) // Using only an alert. It will be redirected to the room and then, the alert
+    // will pop-up. The code below will redirect to the home page
+    location.href = '/'
+  }
+})

@@ -6,6 +6,7 @@ const socketio = require('socket.io')
 const Filter = require('bad-words')
 // Message format created on utils/messages.js
 const { generateMessage, generateLocationMessage } = require('./utils/messages')
+const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/users')
 
 const app = express()
 const server = http.createServer(app) // Reqng http and creating the serv. to pass to socketio
@@ -26,14 +27,31 @@ io.on('connection', (socket) => {
   // socket.emit('message', generateMessage('Welcome to Sermocino!'))
   // socket.broadcast.emit('message', generateMessage('A new user has joined the session.'))
 
-  socket.on('join', ({username, room}) => {
-    socket.join(room)
-    socket.emit('message', generateMessage(`Hello ${username}, welcome to chat-room ${room} at Sermocino`))
-    socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined the room`))
+  socket.on('join', ({username, room}, callback) => {
+    // Use the function from utils to add the user to the Users array and keep track of it.
+    // socket.id = an unique identifier for a particular user connection
+    // Destructuring it since we can get an error instead of the user
+    const { error, user} = addUser({ id: socket.id, username, room })
+    if (error) {
+      return callback(error)
+    }
+
+    socket.join(user.room)
+    socket.emit('message', generateMessage(`Admin`, `Hello ${user.username}, welcome to chat-room ${user.room} at Sermocino`))
+    socket.broadcast.to(user.room).emit('message', generateMessage(`Admin`, `${user.username} has joined the room`))
+    // Populate the room user list with the user
+    io.to(user.room).emit('roomData', {
+      room: user.room,
+      users: getUsersInRoom(user.room)
+    })
+
+    // If no error, let the client know that they were able to join
+    callback()
   })
 
   // Messaging - Added the callback for the acknowledgement of the message
   socket.on('sendMessage', (message, callback) => {
+    const user = getUser(socket.id)
     // Using the filter for bad-words
     const filter = new Filter()
     const allowedWords = ['pussy', 'hell']
@@ -44,20 +62,31 @@ io.on('connection', (socket) => {
       return callback('Profanity is not allowed!')
     }
 
-    io.emit('message', generateMessage(message))
+    io.to(user.room).emit('message', generateMessage(user.username, message))
     callback()
   })
 
   // Get location
   socket.on('sendLocation', (coords, callback) => {
-    io.emit('locationMessage', generateLocationMessage(`https://google.com/maps?q=${coords.latitude},${coords.longitude}`))
+    const user = getUser(socket.id)
+    io.to(user.room).emit('locationMessage', generateLocationMessage(user.username, `https://google.com/maps?q=${coords.latitude},${coords.longitude}`))
     callback()
   })
 
 
-  // On user leave
+  // On user leave - Remove the user from the users array when disconnect
+  // Also, remove it from the users list of the room
   socket.on('disconnect', () => {
-    io.emit('message', generateMessage('A user has left the session.'))
+    const user = removeUser(socket.id)
+
+    if (user) {
+      io.to(user.room).emit('message', generateMessage(`Admin`, `${user.username} has left the room.`))
+      io.to(user.room).emit('roomData', {
+        room: user.room,
+        users: getUsersInRoom(user.room)
+      })
+    }
+
   })
 
 })
