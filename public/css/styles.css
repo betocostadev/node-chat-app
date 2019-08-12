@@ -73,6 +73,17 @@ button:disabled {
     width: 250px;
 }
 
+.centered-form__box h1 {
+    text-align: center;
+    font-size: 2.6rem;
+}
+
+.centered-form__box h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+
 .centered-form button {
     width: 100%;
 }

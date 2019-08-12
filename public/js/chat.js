@@ -17,6 +17,29 @@ const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 // Options - Query String Lib
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
 
+const autoScroll = () => {
+  // new message element
+  const $newMessage = $messages.lastElementChild
+  // new message height
+  const newMessageStyles = getComputedStyle($newMessage)
+  const newMessageMargin = parseInt(newMessageStyles.marginBottom)
+  const newMessageHeight = $newMessage.offsetHeight + newMessageMargin
+
+  // App visible height
+  const visibleHeight = $messages.offsetHeight
+
+  // Height of messages container
+  const containerHeight = $messages.scrollHeight
+
+  // How far has the user scrolled
+  const scrollOffset = Math.ceil($messages.scrollTop + visibleHeight)
+
+  if (containerHeight - newMessageHeight <= scrollOffset) {
+    // If we didn't wanted to check if the user is scrolling, only the code below would do
+    $messages.scrollTop = $messages.scrollHeight
+  }
+}
+
 // Send messages
 socket.on('message', (message) => {
   // console.log(message)
@@ -27,6 +50,7 @@ socket.on('message', (message) => {
     createdAt: moment(message.createdAt).format('h:mm A')
   })
   $messages.insertAdjacentHTML('beforeend', html)
+  autoScroll()
 })
 
 // Location message
@@ -38,6 +62,7 @@ socket.on('locationMessage', (message) => {
     createdAt: moment(message.createdAt).format('h:mm A')
   })
   $messages.insertAdjacentHTML('beforeend', html)
+  autoScroll()
 })
 
 // Populate room and keep track of users:
