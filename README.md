@@ -1,4 +1,4 @@
-# Node-chat-app
+# SERMOCINO - Node Chat app
 
 ## Description
 
